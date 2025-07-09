@@ -23,13 +23,16 @@ services:
     environment:
       - ENV=debug
       - SECRET_KEY=your-secret-key-here
-      - MONGODB_URL=mongodb://mongodb:27017/courtai
+      - MONGODB_URL=mongodb://court_decisions_mongo:27017/courtai
       - REDIS_URL=redis://redis:6379
       - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
     depends_on:
       - redis
     command: ["python", "-m", "app.modules.api"]
     restart: unless-stopped
+    networks:
+      - default
+      - court_decisions_network
 
   # Worker
   worker:
@@ -41,7 +44,7 @@ services:
     environment:
       - ENV=debug
       - SECRET_KEY=your-secret-key-here
-      - MONGODB_URL=mongodb://mongodb:27017/courtai
+      - MONGODB_URL=mongodb://court_decisions_mongo:27017/courtai
       - REDIS_URL=redis://redis:6379
       - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
     depends_on:
@@ -49,7 +52,15 @@ services:
       - api
     command: ["python", "-m", "app.modules.worker"]
     restart: unless-stopped
+    networks:
+      - default
+      - court_decisions_network
+
+# Connect to the existing MongoDB network
+networks:
+  court_decisions_network:
+    external: true
+    name: court-decisions-scraper_court_decisions_network
 
 volumes:
   redis_data:
-  mongodb_data: 

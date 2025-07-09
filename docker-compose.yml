@@ -28,7 +28,6 @@ services:
       - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
     depends_on:
       - redis
-      - mongodb
     command: ["python", "-m", "app.modules.api"]
     restart: unless-stopped
 

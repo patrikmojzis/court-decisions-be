@@ -44,3 +44,4 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
+.idea/courtai-api.iml

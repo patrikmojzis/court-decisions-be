@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Redis service
+  redis:
+    image: redis:7-alpine
+    container_name: courtai-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # API Server
+  api:
+    build: .
+    container_name: courtai-api
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app/app
+      - ./logs:/app/logs
+    environment:
+      - ENV=debug
+      - SECRET_KEY=your-secret-key-here
+      - MONGODB_URL=mongodb://mongodb:27017/courtai
+      - REDIS_URL=redis://redis:6379
+      - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
+    depends_on:
+      - redis
+      - mongodb
+    command: ["python", "-m", "app.modules.api"]
+    restart: unless-stopped
+
+  # Worker
+  worker:
+    build: .
+    container_name: courtai-worker
+    volumes:
+      - ./app:/app/app
+      - ./logs:/app/logs
+    environment:
+      - ENV=debug
+      - SECRET_KEY=your-secret-key-here
+      - MONGODB_URL=mongodb://mongodb:27017/courtai
+      - REDIS_URL=redis://redis:6379
+      - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
+    depends_on:
+      - redis
+      - mongodb
+      - api
+    command: ["python", "-m", "app.modules.worker"]
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  mongodb_data: 

@@ -25,6 +25,8 @@ services:
       - SECRET_KEY=your-secret-key-here
       - MONGODB_URL=mongodb://court_decisions_mongo:27017/courtai
       - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
     depends_on:
       - redis
@@ -46,6 +48,8 @@ services:
       - SECRET_KEY=your-secret-key-here
       - MONGODB_URL=mongodb://court_decisions_mongo:27017/courtai
       - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - REDIS_WORKER_PUBSUB_CHANNEL=worker:new_research
     depends_on:
       - redis
